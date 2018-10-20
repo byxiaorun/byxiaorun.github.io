@@ -1,9 +1,9 @@
 @charset "utf-8";
 /* CSS Document */
  p{text-align:center;font-weight:bold;color:#000;font-size:16px;}
-
+header{width:100%;background:none;padding:0;}
 body{text-rendering: auto;
-background:url(http://bimgs.plmeizi.com/images/bing/2018/Liverpool_ZH-CN12418492140_1920x1080.jpg) #000;}
+background:url(http://bimgs.plmeizi.com/images/bing/2018/Liverpool_ZH-CN12418492140_1920x1080.jpg)#000;background-repeat:no-repeat;}
 input{ width:561px; height:40px; font-size:25px; }
 button{background:#09C; height:60px; width:120px;position:relative; left:0px;}
 
