@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>简单导航</title>
+<link href="css/1.css"  type="text/css" rel="stylesheet">
+</head>
+<body> 
+<!--无关紧要的js文件,点击特效-->
+  <script src="js/docsearch.js"></script>
+  <script src="js/evanyou.min.js"></script>
+  <script src="js/docute.js"></script>
+  <script src="js/config.js"></script>
+<div id="show_time" style="">  
+<script src="js/time.js">时间显示</script>  
+</div>
+<div id="button"><a><audio src="audio/1.mp3" controls="controls" preload id="music" hidden loop="loop" autoplay="" preload="auto"></audio><button id="a" onclick="a();"><img src="image/icon_white.png" /></button></a><script src="js/music.js">音乐控制</script></div>
+<p>简单搜索</p>
+<div id="so">
+ <script>  
+			//将光标定位于输入框最右侧
+            var input = document.getElementsByTagName('input')[0];  
+            var val = input.value;  
+            input.focus();  
+            input.value = '';  
+            input.value = val;  
+        </script> 
+	<div>                 
+      <form target="_blank" action="http://cn.bing.com/search?q=">
+        <input type="text" name="q" title="输入搜索词">
+        <button>微软必应搜索</button>   
+      </form>   
+   </div>
+    <div>                 
+      <form target="_blank" action="https://www.so.com/s?q=">
+        <input type="text" name="q" title="输入搜索词">
+        <button>360搜索</button>   
+      </form>   
+   </div>
+   <div>                 
+      <form target="_blank" action="https://www.google.com/search?q=">
+        <input type="text" name="q" title="输入搜索词">
+        <button>谷歌搜索</button>   
+      </form>   
+   </div>
+    <div>  
+   <form target="_blank" action="https://www.baidu.com/baidu">
+   <input type="text" name="wd" title="输入搜索词">
+   <button>百度搜索</button>   
+   </form>
+
+   </div>
+
+    
+    
+</div>
+
+<div class="nav">
+<h2>常用网址</h2>
+<a target="_blank" href="http://www.coolapk.com">酷安网</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<a target="_blank" href="">网址</a>
+<div class="clear"></div>
+</div>
+
+</div>  
+</body></html>

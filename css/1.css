@@ -1,0 +1,34 @@
+@charset "utf-8";
+/* CSS Document */
+ p{text-align:center;font-weight:bold;color:#000;font-size:16px;}
+
+body{text-rendering: auto;
+background:url(http://bimgs.plmeizi.com/images/bing/2018/Liverpool_ZH-CN12418492140_1920x1080.jpg) #000;}
+input{ width:561px; height:40px; font-size:25px; }
+button{background:#09C; height:60px; width:120px;position:relative; left:0px;}
+
+#so{
+	position: fixed;
+	left:50%;
+	margin:0px 0 0 -280px;
+}
+div{padding-top:20px;}
+.nav {
+	width:200px;
+	position: absolute;
+	left:0px;
+	background-color:#fff;
+	float: left;
+	top:200px;
+}
+
+.nav h2{background-color:#836FFF; padding:5px 10px;font-size:16px; text-align:center;}
+.clear {clear:both; height:15px;}
+a{float:left; width:150px; margin-top:15px; margin-left:10px; text-align:center; text-decoration: none; color:#06C;}
+a:hover {text-decoration: none; color:#0F6;}
+#show_time{    
+width:300px;  
+height:100px;  
+color:#FFF;    
+}
+#button{ position:absolute;top:0px; right:0px;border-radius:50%;}
