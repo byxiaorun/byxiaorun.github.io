@@ -4,11 +4,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>向小润支付</title>
 <style>
-body{height:500px;text-align:center; position:relative; top:200px;font-size:36px;}
-
+body{ height:500px;text-align:center; position:relative; top:200px; right:30px;font-size:45px;}
 dd{
-	width:800px;height:1000px;
+	width:1000px;
+	height:1050px;
 	overflow:hidden;
+    margin:0px auto;
 }/*固定*/
 </style>
 </head>
@@ -23,10 +24,12 @@ else if (/MicroMessenger/.test(window.navigator.userAgent)) {
 else if (/QQ/.test(window.navigator.userAgent)) { 
     location.href='index.html#b'; 
 }
+else{ location.href='index.html#c';}
 </script>
 <div>
     
 <dd>
+
 <ul id="a" >
 <p>扫一扫向小润支付</p>
 <img src="wechat.png" />
@@ -36,6 +39,11 @@ else if (/QQ/.test(window.navigator.userAgent)) {
 <ul id="b">
 <img src="qq.png"  />
 </ul>
+<p>扫一扫向小润支付</p>
+<ul id="c">
+<img src="qrcode.png"  />
+</ul>
+
 
 </dd>
 </div>
