@@ -1,0 +1,6 @@
+ var count = Math.floor(Math.random() * hit.length);
+                var ran = hit[count];
+                var text = ran.hitokoto;
+                var author = ran.source;
+                document.getElementById("yiyan").innerHTML="<br />"+text + "&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp——" + author
+                document.title ="小润搜索主页 - 极简多引擎首页"
