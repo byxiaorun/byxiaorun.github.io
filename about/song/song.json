@@ -1,0 +1,13 @@
+{
+"code": 200,
+"msg": "请求成功",
+"data": {
+"singer": "G.E.M. 邓紫棋",
+"title": "唯一",
+"music": "https://er-sycdn.kuwo.cn/fc4863dd6db118a99e53d9b7d04828b3/6889ba8c/resource/30106/trackmedia/M800001ziKgJ3o5Ipp.mp3",
+"cover": "https://p3-luna.douyinpic.com/img/tos-cn-v-2774c002/o4iBEAhpSrzAsuw0SjAqfyVANAoAAyEWKNEWvk~c5_375x375.jpg",
+"link": "https://music.douyin.com/qishui/share/track?track_id=7284443920741058562",
+"lrc": "https://byxiaorun.com/about/song/song.lrc"
+}
+}
+

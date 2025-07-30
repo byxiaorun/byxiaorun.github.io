@@ -32,18 +32,12 @@ function getAchives(){
     })
 }
 
-function gethitokoto(){
-    $.ajax({
-        type:"POST",
-        url:"https://api.fczbl.vip/hitokoto/?encode=json",
-        dataType:"json",
-        success:function(result){
-            write(result.hitokoto);
-        },
-        error:function(){
-            $('#hitokoto').html("Error: Failed to get hitokoto.");
-        }
-    });
+function gethitokoto() {
+  $.post("https://v1.hitokoto.cn?c=d&c=h&c=d&c=i&c=j&c=k", function(res) {
+    $('#hitokoto').html('"' + res.hitokoto + '"' + (res.from_who ? '<span>- ' + res.from_who + '</span>' : ''));
+  }).fail(function() {
+    $('#hitokoto').html("Error: Failed to get hitokoto.");
+  });
 }
 
 function write(text){
