@@ -18,7 +18,7 @@ function getAchives(){
     t = ``;
     $.ajax({
         type:"GET",
-        url:"https://blog.byxiaorun.com/wp-json/wp/v2/posts?per_page=8",
+        url:"https://blog.byxiaorun.github.io/wp-json/wp/v2/posts?per_page=8",
         dataType:"json",
         success:function(json){
             for(var i = 0;i < json.length;i++){
