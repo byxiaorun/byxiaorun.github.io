@@ -1,3 +1,4 @@
-＃byxiaorun.github.io
-个人网站
-byxiaorun.com域名被抢注切勿相信该域名的任何东西
+# byxiaorun.com域名被抢注切勿相信该域名的任何东西
+# byxiaorun.com域名被抢注切勿相信该域名的任何东西
+# byxiaorun.com域名被抢注切勿相信该域名的任何东西
+起因:在namesilo上取消了续费(本来想转移域名的,没想到直接把域名删了...找客服他们说没办法恢复,namesilo的服务条款就是这样子,唉只能怪自己没看

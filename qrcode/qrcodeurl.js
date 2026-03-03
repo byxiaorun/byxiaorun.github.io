@@ -1,4 +1,4 @@
-var friend = "https://byxiaorun.com/qrcode";
+var friend = "https://byxiaorun.github.io/qrcode";
 var wechat = "https://payapp.weixin.qq.com/qr/AQE6DUEcUlWkOyHVkNs_eAzD?t=AQAC#wechat_pay";
 var myQRCode = document.getElementById("friendcode");
 var hideQRCode = document.getElementById("hideimage");

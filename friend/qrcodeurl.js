@@ -1,4 +1,4 @@
-var friend = "https://byxiaorun.com/friend";
+var friend = "https://byxiaorun.github.io/friend";
 var wechat = "https://u.wechat.com/MNK4rvbZhXFwcjSoGcHlQUU";
 var myQRCode = document.getElementById("friendcode");
 var hideQRCode = document.getElementById("hideimage");
