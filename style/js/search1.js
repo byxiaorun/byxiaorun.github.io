@@ -1,1 +1,184 @@
-function getHotkeyword(o){$.ajax({type:"GET",url:"https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su",async:!0,data:{wd:o},dataType:"jsonp",jsonp:"cb",success:function(o){if($("#box ul").text(""),hotList=o.s.length){$("#box").css("display","block");for(var t=0;hotList>t;t++)$("#box ul").append("<li><span>"+(t+1)+"</span>"+o.s[t]+"</li>"),$("#box ul li").eq(t).click(function(){$("#txt").val(this.childNodes[1].nodeValue),window.open(thisSearch+this.childNodes[1].nodeValue),$("#box").css("display","none")}),0===t?($("#box ul li").eq(t).css({"border-top":"none"}),$("#box ul span").eq(t).css({color:"#fff",background:"#f54545"})):1===t?$("#box ul span").eq(t).css({color:"#fff",background:"#ff8547"}):2===t&&$("#box ul span").eq(t).css({color:"#fff",background:"#ffac38"})}else $("#box").css("display","none")},error:function(o){console.log(o)}})}function populateSearchEngines(o,t){t.forEach(function(t){var c='<li><i style="background: url('+t.background+') no-repeat center/cover;"></i><span>'+t.name+"</span></li>";$(o).append(c)}),$(o+" li").click(function(){var o=$(this).index(),c=$(this).children().attr("class"),e=$(this).children().attr("style");$("#search-icon").attr({class:c,style:e}),thisSearch=t[o].url,$(".search-engine").hide(),window.localStorage.searchEngine=[thisSearch,c,e]})}$(function(){$.getJSON("./style/js/engines.json", function(data){populateSearchEngines(".search-engine-list", data.list1);populateSearchEngines(".search-engine-list2", data.list2);populateSearchEngines(".search-engine-list3", data.list3);populateSearchEngines(".search-engine-list4", data.list4);populateSearchEngines(".search-engine-list5", data.list5);})});$(function(){var o=window.localStorage,t="true"===o.stopHot;thisSearch="https://quark.sm.cn/s?q=",thisSearchIcon="./logo.jpg";var c=-1,e=o.searchEngine;if(e){var a=e.split(",");if(a.length>=2){thisSearch=a[0];var n=a[1]||"",s=a.length>2?a[2]:"";$("#search-icon").attr({class:n,style:s})}}$("#txt").keyup(function(o){var t=o.keyCode||o.which,c=$(this).val().trim();if(c){if(-1!==[38,40].indexOf(t)||"true"!==window.localStorage.getItem("stopHot"))return;$("#search-clear").show(),getHotkeyword(c)}else $("#search-clear").hide(),$("#box").hide()}),$("#txt").keydown(function(o){var t=o.keyCode||o.which;if(-1!==[40,38,13].indexOf(t)){if(o.preventDefault(),40===t)c=(c+1)%hotList;else if(38===t)c=0===c||-1===c?hotList-1:c-1;else if(13===t){var e;return e=-1!==c&&$("#box").is(":visible")?$("#box ul li").eq(c).text().trim().slice(1):$(this).val().trim(),window.open(thisSearch+e),$("#box").hide(),$(this).blur(),c=-1,!1}var a=$("#box ul li").eq(c);a.addClass("current").siblings().removeClass("current"),$("#txt").val(a.text().trim().slice(1))}}),$("#search-clear").click(function(){$("#txt").val(""),$(this).hide(),$("#box").hide()}),$("#txt").focus(function(){$(".search-box").css({"box-shadow":"0 4px 6px #0000001f",border:"1px solid #cecece"}),$(this).val()&&"true"===o.getItem("stopHot")&&getHotkeyword($(this).val())}),$(".box ul li").click(function(){var o=$(this).text().slice(1);window.open(thisSearch+o)}),$("#search-icon, .search-engine").hover(function(){$(".search-engine").show()},function(){$(".search-engine").hide()}),$("#hot-btn").attr("class","iconfont icon-kaiguanguan-"+(t?"kai":"guan")),$("#hot-btn").on("click",function(){storage=window.localStorage,t="true"===storage.stopHot,$(this).attr("class","iconfont icon-kaiguanguan-"+(t?"guan":"kai")),storage.stopHot=t?"false":"true",console.log(storage.stopHot),!t&&$("#txt").val()&&getHotkeyword($("#txt").val()),$("#box").hide()})});
+let thisSearch = "https://quark.sm.cn/s?q=";
+function setSearchIcon(e) {
+    let n = "";
+    e.iconSvg ? n = '<svg class="icon"><use xlink:href="' + e.iconSvg + '"></use></svg>' : e.iconImg && (n = '<img src="' + e.iconImg + '">'),
+    $("#search-icon").html(n)
+}
+function getHotkeyword(e) {
+    $.ajax({
+        type: "GET",
+        url: "https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su",
+        data: {
+            wd: e
+        },
+        dataType: "jsonp",
+        jsonp: "cb",
+        success: function(e) {
+            $("#box ul").empty(),
+            e.s && e.s.length ? ($("#box").show(),
+            e.s.forEach( (e, n) => {
+                $("#box ul").append("<li><span>" + (n + 1) + "</span>" + e + "</li>")
+            }
+            ),
+            $("#box ul li").off("click").on("click", function() {
+                var e = $(this).text().slice(1);
+                $("#txt").val(e),
+                window.open(thisSearch + e),
+                $("#box").hide()
+            }),
+            $("#box ul span").each(function(e) {
+                0 === e ? $(this).css({
+                    color: "#fff",
+                    background: "#f54545"
+                }) : 1 === e ? $(this).css({
+                    color: "#fff",
+                    background: "#ff8547"
+                }) : 2 === e && $(this).css({
+                    color: "#fff",
+                    background: "#ffac38"
+                })
+            })) : $("#box").hide()
+        }
+    })
+}
+function populateSearchEngines(o, n) {
+    n.forEach(function(n) {
+        if (n.hidden)
+            $(o).append('<li style="opacity:0;pointer-events:auto;"><span>' + (n.name || "") + "</span></li>");
+        else {
+            let e = "";
+            n.iconSvg ? e = '<svg class="icon"><use xlink:href="' + n.iconSvg + '"></use></svg>' : n.iconImg && (e = '<img src="' + n.iconImg + '">'),
+            $(o).append("<li>" + e + "<span>" + n.name + "</span></li>")
+        }
+    }),
+    $(o).off("click").on("click", "li", function() {
+        var e = $(this).index()
+          , e = n[e];
+        e && e.url && (thisSearch = e.url,
+        setSearchIcon(e),
+        $(".search-engine").hide(),
+        localStorage.searchEngine = JSON.stringify(e))
+    })
+}
+$(function() {
+    setSearchIcon({
+        iconSvg: "#icon-kuake",
+        url: thisSearch
+    });
+    var e = localStorage.searchEngine;
+    if (e)
+        try {
+            var n = JSON.parse(e);
+            thisSearch = n.url || thisSearch,
+            setSearchIcon(n)
+        } catch (e) {
+            console.log(e)
+        }
+    $.getJSON("./style/js/engines.json", function(e) {
+        e && (populateSearchEngines(".search-engine-list", e.list1 || []),
+        populateSearchEngines(".search-engine-list2", e.list2 || []),
+        populateSearchEngines(".search-engine-list3", e.list3 || []),
+        populateSearchEngines(".search-engine-list4", e.list4 || []),
+        populateSearchEngines(".search-engine-list5", e.list5 || []))
+    })
+}),
+$(function() {
+    let e = window.localStorage
+      , n = "false" !== e.getItem("stopHot")
+      , c = -1
+      , o = null;
+    function t() {
+        c = -1,
+        $("#box ul li").removeClass("current")
+    }
+    function i() {
+        return $("#txt").val().trim()
+    }
+    function s(e) {
+        $.ajax({
+            type: "GET",
+            url: "https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su",
+            data: {
+                wd: e
+            },
+            dataType: "jsonp",
+            jsonp: "cb",
+            success: function(n) {
+                if ($("#box ul").empty(),
+                n.s && n.s.length) {
+                    $("#box").show();
+                    for (let e = 0; e < n.s.length; e++)
+                        $("#box ul").append("<li><span>" + (e + 1) + "</span>" + n.s[e] + "</li>"),
+                        $("#box ul li").eq(e).off("click").on("click", function() {
+                            var e = $(this).text().slice(1);
+                            $("#txt").val(e),
+                            window.open(thisSearch + e),
+                            $("#box").hide(),
+                            t()
+                        }),
+                        0 === e ? $("#box ul span").eq(e).css({
+                            color: "#fff",
+                            background: "#f54545"
+                        }) : 1 === e ? $("#box ul span").eq(e).css({
+                            color: "#fff",
+                            background: "#ff8547"
+                        }) : 2 === e && $("#box ul span").eq(e).css({
+                            color: "#fff",
+                            background: "#ffac38"
+                        })
+                } else
+                    $("#box").hide()
+            }
+        })
+    }
+    $("#txt").on("input", function() {
+        var e = i();
+        e ? ($("#search-clear").show(),
+        n && s(e)) : ($("#search-clear").hide(),
+        $("#box").hide(),
+        t())
+    }),
+    $("#txt").on("keydown", function(e) {
+        var n, o = e.keyCode || e.which, s = $("#box ul li");
+        if (13 === o)
+            return e.preventDefault(),
+            (n = 0 <= c && s.length ? s.eq(c).text().slice(1) : i()) ? (window.open(thisSearch + n),
+            $("#box").hide(),
+            t(),
+            !1) : void 0;
+        38 !== o && 40 !== o || (e.preventDefault(),
+        s.length && (c = 40 === o ? (c + 1) % s.length : c <= 0 ? s.length - 1 : c - 1,
+        s.removeClass("current"),
+        s.eq(c).addClass("current")))
+    }),
+    $("#search-clear").on("click", function() {
+        $("#txt").val(""),
+        $(this).hide(),
+        $("#box").hide(),
+        t()
+    }),
+    $("#txt").on("focus", function() {
+        $(".search-box").css({
+            "box-shadow": "0 4px 6px #0000001f",
+            border: "1px solid #cecece"
+        });
+        var e = i();
+        e && n && s(e)
+    }),
+    $("#search-icon, .search-engine").on("mouseenter", function() {
+        clearTimeout(o),
+        $(".search-engine").show()
+    }).on("mouseleave", function() {
+        o = setTimeout( () => {
+            $(".search-engine").hide()
+        }
+        , 200)
+    }),
+    $("#hot-btn").attr("class", "iconfont icon-kaiguanguan-" + (n ? "kai" : "guan")).on("click", function() {
+        n = !n,
+        e.setItem("stopHot", n ? "true" : "false"),
+        $(this).attr("class", "iconfont icon-kaiguanguan-" + (n ? "kai" : "guan")),
+        n && i() && s(i()),
+        $("#box").hide()
+    })
+});
