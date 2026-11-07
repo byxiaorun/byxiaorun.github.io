@@ -1,58 +1,13 @@
 let thisSearch = "https://quark.sm.cn/s?q=";
+var keyword_var = "{keyword}";
+function buildSearchUrl(word) {
+  var parts = thisSearch.split(keyword_var);
+  return parts.length > 1 ? parts.join(word) : thisSearch + word;
+}
 function setSearchIcon(e) {
     let n = "";
     e.iconSvg ? n = '<svg class="icon"><use xlink:href="' + e.iconSvg + '"></use></svg>' : e.iconImg && (n = '<img src="' + e.iconImg + '">'),
     $("#search-icon").html(n)
-}
-function getHotkeyword(e) {
-  $.ajax({
-    type: "GET",
-    url: "https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su",
-    data: {
-      wd: e,
-    },
-    dataType: "jsonp",
-    jsonp: "cb",
-    success: function (e) {
-      $("#box ul").empty();
-      if (e.s && e.s.length) {
-        $("#box").show();
-        e.s.forEach(function (item, n) {
-          $("#box ul").append(
-            "<li><span>" + (n + 1) + "</span>" + item + "</li>"
-          );
-        });
-        $("#box ul li")
-          .off("click")
-          .on("click", function () {
-            var txtVal = $(this).text().slice(1);
-            $("#txt").val(txtVal);
-            window.open(thisSearch + txtVal);
-            $("#box").hide();
-          });
-        $("#box ul span").each(function (idx) {
-          if (0 === idx) {
-            $(this).css({
-              color: "#fff",
-              background: "#f54545",
-            });
-          } else if (1 === idx) {
-            $(this).css({
-              color: "#fff",
-              background: "#ff8547",
-            });
-          } else if (2 === idx) {
-            $(this).css({
-              color: "#fff",
-              background: "#ffac38",
-            });
-          }
-        });
-      } else {
-        $("#box").hide();
-      }
-    },
-  });
 }
 function populateSearchEngines(o, n) {
     n.forEach(function(n) {
@@ -131,15 +86,22 @@ $(function () {
   }
 
   function s(e) {
+    var wd = e;
     $.ajax({
       type: "GET",
-      url: "https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su",
+      url: "https://suggestion.baidu.com/su",
       data: {
         wd: e,
       },
       dataType: "jsonp",
       jsonp: "cb",
       success: function (n) {
+        if (!i()) {
+          $("#box").hide();
+          t();
+          return;
+        }
+        if (wd !== i()) return;
         if (($("#box ul").empty(), n.s && n.s.length)) {
           $("#box").show();
           for (let e = 0; e < n.s.length; e++)
@@ -152,7 +114,7 @@ $(function () {
                 .on("click", function () {
                   var e = $(this).text().slice(1);
                   ($("#txt").val(e),
-                    window.open(thisSearch + e),
+                    window.open(buildSearchUrl(e)),
                     $("#box").hide(),
                     t());
                 }),
@@ -189,7 +151,7 @@ $(function () {
         return (
           e.preventDefault(),
           (n = 0 <= c && s.length ? s.eq(c).text().slice(1) : i())
-            ? (window.open(thisSearch + n), $("#box").hide(), t(), !1)
+            ? (window.open(buildSearchUrl(n)), $("#box").hide(), t(), !1)
             : void 0
         );
       (38 !== o && 40 !== o) ||
