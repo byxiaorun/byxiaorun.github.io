@@ -60,14 +60,95 @@ $(function () {
   var jsonUrl = isIE11()
     ? "./style/js/engines-ie.json"
     : "./style/js/engines.json";
-  $.getJSON(jsonUrl, function (res) {
-    if (res) {
-      populateSearchEngines(".search-engine-list", res.list1 || []);
-      populateSearchEngines(".search-engine-list2", res.list2 || []);
-      populateSearchEngines(".search-engine-list3", res.list3 || []);
-      populateSearchEngines(".search-engine-list4", res.list4 || []);
-      populateSearchEngines(".search-engine-list5", res.list5 || []);
+  // 自定义引擎列表：导入的 JSON 存 localStorage，刷新后仍然生效
+  var ENGINES_STORE = "customEngines";
+  var engineLists = [".search-engine-list", ".search-engine-list2", ".search-engine-list3", ".search-engine-list4", ".search-engine-list5"];
+  var engineKeys = ["list1", "list2", "list3", "list4", "list5"];
+  var DEFAULT_TABS = ["搜索", "社区", "论坛", "生活", "影视"];
+    // 渲染左侧分类名称：最多 5 个，超出忽略；不足用默认名称补齐。
+  function renderTabs(res) {
+    var custom = (res && Object.prototype.toString.call(res.tabs) === "[object Array]") ? res.tabs : [];
+    var lis = $(".search-engine-tab li");
+    for (var i = 0; i < lis.length && i < 5; i++) {
+      var name = (i < custom.length && custom[i] != null && custom[i] !== "") ? custom[i] : DEFAULT_TABS[i];
+      $(lis[i]).text(name);
     }
+  }
+
+  function renderEngines(res) {
+    if (!res) return;
+    for (var i = 0; i < engineLists.length; i++) {
+      $(engineLists[i]).empty();
+      populateSearchEngines(engineLists[i], res[engineKeys[i]] || []);
+    }
+    renderTabs(res);
+  }
+
+  function loadDefaultEngines() {
+    $.getJSON(jsonUrl, function (res) {
+      renderEngines(res);
+    });
+  }
+
+  function loadEngines() {
+    var custom = null;
+    try {
+      custom = JSON.parse(localStorage.getItem(ENGINES_STORE) || "null");
+    } catch (err) {}
+    if (custom) renderEngines(custom);
+    else loadDefaultEngines();
+  }
+
+  loadEngines();
+
+  // 导入 JSON：读本地文件 → 校验 → 持久化 → 立即重绘
+  $("#import-json-file").on("change", function () {
+    var input = this;
+    var file = input.files && input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var data;
+      try {
+        data = JSON.parse(reader.result);
+      } catch (err) {
+        alert("导入失败：文件不是有效的 JSON");
+        return;
+      }
+      var valid = false;
+      if (data && typeof data === "object") {
+        for (var i = 0; i < engineKeys.length; i++) {
+          if (Object.prototype.toString.call(data[engineKeys[i]]) === "[object Array]") {
+            valid = true;
+            break;
+          }
+        }
+      }
+      if (!valid) {
+        alert("导入失败：需要包含 list1~list5 的引擎配置（与 engines.json 相同格式）");
+        return;
+      }
+      try {
+        localStorage.setItem(ENGINES_STORE, JSON.stringify(data));
+      } catch (err2) {
+        alert("导入失败：本地存储不可用或空间不足");
+        return;
+      }
+      renderEngines(data);
+      try { input.value = ""; } catch (err3) {}
+      alert("导入成功：已保存到本地，刷新后仍然生效");
+    };
+    reader.onerror = function () {
+      alert("导入失败：无法读取文件");
+    };
+    reader.readAsText(file, "utf-8");
+  });
+
+  // 恢复默认：清除自定义配置，重新读取默认 engines.json
+  $("#import-json-reset").on("click", function () {
+    try { localStorage.removeItem(ENGINES_STORE); } catch (err) {}
+    loadDefaultEngines();
+    alert("已恢复默认引擎列表");
   });
 });
 
