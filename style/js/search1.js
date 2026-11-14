@@ -4,20 +4,147 @@ function buildSearchUrl(word) {
   var parts = thisSearch.split(keyword_var);
   return parts.length > 1 ? parts.join(word) : thisSearch + word;
 }
+/* 图标兜底：图标加载失败显示首字+底色；iconSvg为#icon-xxx不参与配色，iconImg为图片链接或#色值（文字图标底色），无配置按名称生成固定底色，文字自动黑白适配WCAG对比度，iconText可选自定义显示文字 */
+var HEX_COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+function escapeHtml(s) {
+    return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function hashString(s) {
+    var h = 0, i;
+    s = String(s || "");
+    for (i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+    return h < 0 ? -h : h;
+}
+function hue2rgb(p, q, t) {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+}
+function hslToRgb(h, s, l) {
+    var r, g, b, q, p;
+    h /= 360; s /= 100; l /= 100;
+    if (s === 0) { r = g = b = l; }
+    else {
+        q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1 / 3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1 / 3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+function hexToRgb(hex) {
+    var s = hex.slice(1), c;
+    if (s.length === 3) {
+        c = s.charAt(0); s = c + c + s.charAt(1) + s.charAt(1) + s.charAt(2) + s.charAt(2);
+    }
+    return [parseInt(s.slice(0, 2), 16), parseInt(s.slice(2, 4), 16), parseInt(s.slice(4, 6), 16)];
+}
+function rgbToHex(rgb) {
+    var out = "#", i, v;
+    for (i = 0; i < 3; i++) {
+        v = Math.max(0, Math.min(255, rgb[i])).toString(16);
+        out += v.length < 2 ? "0" + v : v;
+    }
+    return out.toUpperCase();
+}
+function textColorFor(rgb) {
+    var i, c, a = [], L;
+    for (i = 0; i < 3; i++) {
+        c = rgb[i] / 255;
+        a[i] = c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    }
+    L = 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+    // 与黑字、白字的对比度取大者
+    return (L + 0.05) / 0.05 > 1.05 / (L + 0.05) ? "#1A1A1A" : "#FFFFFF";
+}
+function engineBg(e) {
+    var custom = "", rgb, h, hue, sat, light;
+    if (e.iconBg && HEX_COLOR.test(e.iconBg)) custom = e.iconBg;
+    else if (e.iconImg && HEX_COLOR.test(e.iconImg)) custom = e.iconImg;
+    else if (e.iconSvg && HEX_COLOR.test(e.iconSvg)) custom = e.iconSvg;
+    if (custom) return { css: custom, rgb: hexToRgb(custom) };
+    // 名称+地址做哈希：不同引擎颜色不同，同一引擎每次刷新保持一致
+    h = hashString(String(e.name || "") + "|" + String(e.url || ""));
+    hue = h % 360;
+    sat = 58 + h % 13;
+    light = 36 + (h >> 8) % 18;
+    rgb = hslToRgb(hue, sat, light);
+    return { css: rgbToHex(rgb), rgb: rgb };
+}
+function iconTextOf(e) {
+    var t, first;
+    t = e.iconText != null && e.iconText !== "" ? String(e.iconText) : String(e.name || "");
+    t = t.replace(/^\s+|\s+$/g, "");
+    if (!t) return "?";
+    first = t.charAt(0);
+    return /[a-z]/i.test(first) ? first.toUpperCase() : first;
+}
+function buildTextIcon(e) {
+    var bg = engineBg(e);
+    return '<i class="engine-text-icon" style="background:' + bg.css +
+        ';color:' + textColorFor(bg.rgb) + '">' + escapeHtml(iconTextOf(e)) + "</i>";
+}
+function symbolExists(ref) {
+    var id = String(ref || "");
+    id = id.charAt(0) === "#" ? id.slice(1) : "";
+    return !id || !!document.getElementById(id);
+}
+function buildEngineIcon(e, forceText) {
+    e = e || {};
+    if (!forceText) {
+        // 图标库 symbol 不存在（CDN 失败 / 导入的 id 写错）时直接走文字图标
+        if (e.iconSvg && !HEX_COLOR.test(e.iconSvg) && symbolExists(e.iconSvg))
+            return '<svg class="icon"><use xlink:href="' + escapeHtml(e.iconSvg) + '"></use></svg>';
+        if (e.iconImg && !HEX_COLOR.test(e.iconImg))
+            return '<img src="' + escapeHtml(e.iconImg) + '" alt="">';
+    }
+    return buildTextIcon(e);
+}
+// 图片 404 / 图标库 symbol 后来消失时，换成文字图标
+function applyIconFallback($icon, e) {
+    var tag, id, ref, done = false;
+    if (!$icon || !$icon.length) return;
+    tag = ($icon[0].tagName || "").toLowerCase();
+    function swap() {
+        if (done) return;
+        done = true;
+        $icon.replaceWith(buildTextIcon(e));
+    }
+    if (tag === "img") {
+        $icon.on("error", swap);
+        try { if ($icon[0].complete && !$icon[0].naturalWidth) swap(); } catch (err) {}
+    } else if (tag === "svg") {
+        ref = String(e.iconSvg || "");
+        id = ref.charAt(0) === "#" ? ref.slice(1) : "";
+        if (id) {
+            var check = function () { if (!document.getElementById(id)) swap(); };
+            window.setTimeout(check, 0);
+            window.setTimeout(check, 1200);
+        }
+    }
+}
 function setSearchIcon(e) {
-    let n = "";
-    e.iconSvg ? n = '<svg class="icon"><use xlink:href="' + e.iconSvg + '"></use></svg>' : e.iconImg && (n = '<img src="' + e.iconImg + '">'),
-    $("#search-icon").html(n)
+    var $box = $("#search-icon");
+    $box.html(buildEngineIcon(e));
+    applyIconFallback($box.find("img, svg").first(), e);
 }
 function populateSearchEngines(o, n) {
     n.forEach(function(n) {
         if (n.hidden)
             $(o).append('<li style="opacity:0;pointer-events:auto;"><span>' + (n.name || "") + "</span></li>");
-        else {
-            let e = "";
-            n.iconSvg ? e = '<svg class="icon"><use xlink:href="' + n.iconSvg + '"></use></svg>' : n.iconImg && (e = '<img src="' + n.iconImg + '">'),
-            $(o).append("<li>" + e + "<span>" + n.name + "</span></li>")
-        }
+        else
+            $(o).append("<li>" + buildEngineIcon(n) + "<span>" + n.name + "</span></li>")
+    }),
+    $(o).children("li").each(function (idx) {
+        var eng = n[idx];
+        if (eng && !eng.hidden) applyIconFallback($(this).find("img, svg").first(), eng);
     }),
     $(o).off("click").on("click", "li", function() {
         var e = $(this).index()
@@ -35,11 +162,13 @@ $(function () {
   var initCfg;
   if (isIE11()) {
     initCfg = {
+      name: "夸克",
       iconImg: "https://sm01.alicdn.com/L1/272/1990/favicon/favi.ico",
       url: thisSearch,
     };
   } else {
     initCfg = {
+      name: "夸克",
       iconSvg: "#icon-kuake",
       url: thisSearch,
     };

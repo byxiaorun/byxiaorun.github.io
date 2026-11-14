@@ -684,3 +684,59 @@ input:-ms-input-placeholder {
         flex-basis: 100%;
     }
 }
+
+/* 文字版图标：图标缺失/加载失败兜底；尺寸圆形沿用上方img/svg/i的!important规则，仅补充字体排版 */
+#search-icon .engine-text-icon,
+.search-engine-list li .engine-text-icon,
+.search-engine-list2 li .engine-text-icon,
+.search-engine-list3 li .engine-text-icon,
+.search-engine-list4 li .engine-text-icon,
+.search-engine-list5 li .engine-text-icon {
+    font-style: normal;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#search-icon .engine-text-icon {
+    font-size: 15px;
+    line-height: 28px;
+}
+.search-engine-list li .engine-text-icon,
+.search-engine-list2 li .engine-text-icon,
+.search-engine-list3 li .engine-text-icon,
+.search-engine-list4 li .engine-text-icon,
+.search-engine-list5 li .engine-text-icon {
+    font-size: 12px;
+    line-height: 22px;
+}
+
+/* 无JS时展示百度搜索按钮，form直接提交百度；html存在js-on标识代表JS可用，隐藏按钮保持原有界面 */
+.nojs-search-btn {
+    display: inline-block;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    height: 50px;
+    padding: 0 16px;
+    background: #3385ff;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    border: 0;
+    border-radius: 0 4px 4px 0;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.nojs-search-btn:hover {
+    background: #2b75e8;
+}
+.js-on .nojs-search-btn {
+    display: none;
+}
